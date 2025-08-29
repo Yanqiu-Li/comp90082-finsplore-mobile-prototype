@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FP-Koala Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Spartan:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        *::-webkit-scrollbar {
+            display: none;
+        }
+        .spartan { font-family: 'Spartan', sans-serif; }
+        .nunito { font-family: 'Nunito', sans-serif; }
+        .phone-mockup {
+            width: 375px;
+            height: 812px;
+            background: black;
+            border-radius: 40px;
+            padding: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #f6f6f6;
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .status-bar {
+            height: 44px;
+            background: transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #DCD4FD 0%, rgba(220, 212, 253, 0.3) 100%);
+        }
+        .goal-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(71, 35, 219, 0.08);
+            border: 1px solid rgba(220, 212, 253, 0.3);
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #4723DB 0%, #DCD4FD 100%);
+        }
+        .fab-button {
+            background: linear-gradient(135deg, #4723DB 0%, #FF4D59 100%);
+            box-shadow: 0 8px 24px rgba(71, 35, 219, 0.3);
+        }
+        .quick-add-btn {
+            background: linear-gradient(135deg, #FEDADD 0%, #FF4D59 100%);
+            color: #4723DB;
+        }
+        .rounded-16 {
+            border-radius: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="flex justify-center items-center min-h-screen bg-gray-100">
+        <div class="phone-mockup">
+            <div class="screen">
+                <!-- Status Bar -->
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <div class="flex space-x-1">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-full"></i>
+                    </div>
+                </div>
+
+                <!-- Header -->
+                <div class="gradient-bg px-6 py-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h1 class="spartan text-2xl font-bold text-gray-800">My Goals</h1>
+                            <p class="nunito text-sm text-gray-600 mt-1">Turn dreams into reality</p>
+                        </div>
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md">
+                            <i class="fas fa-user text-gray-600 text-lg"></i>
+                        </div>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="bg-white bg-opacity-60 backdrop-blur-sm rounded-16 p-4">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <i class="fas fa-bullseye text-blue-500"></i>
+                                <span class="nunito text-xs text-gray-600">Active Goals</span>
+                            </div>
+                            <p id="activeGoalsCount" class="spartan text-xl font-bold text-gray-800">-</p>
+                        </div>
+                        <div class="bg-white bg-opacity-60 backdrop-blur-sm rounded-16 p-4">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <i class="fas fa-chart-line text-green-500"></i>
+                                <span class="nunito text-xs text-gray-600">Avg Progress</span>
+                            </div>
+                            <p id="avgProgress" class="spartan text-xl font-bold text-gray-800">-%</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Goals List -->
+                <div class="px-6 py-4 flex-1 overflow-y-auto min-h-0" style="padding-bottom: 100px;">
+                    <div id="goalsList">
+                        <!-- Goals will be loaded here -->
+                    </div>
+                    
+                    <!-- Empty State -->
+                    <div id="emptyState" class="text-center py-12" style="display: none;">
+                        <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-target text-gray-400 text-3xl"></i>
+                        </div>
+                        <h3 class="spartan text-xl font-semibold text-gray-800 mb-2">No Goals Yet</h3>
+                        <p class="nunito text-gray-600 mb-6">Start your financial journey by creating your first goal.</p>
+                        <button class="primary-btn px-8 py-3 spartan font-semibold text-base" onclick="window.location.href='/create-goal'">
+                            <i class="fas fa-plus mr-2"></i>Create Your First Goal
+                        </button>
+                    </div>
+                    
+                    <!-- Loading State -->
+                    <div id="loadingState" class="text-center py-12">
+                        <i class="fas fa-spinner fa-spin text-blue-500 text-2xl mb-4"></i>
+                        <p class="nunito text-gray-600">Loading your goals...</p>
+                    </div>
+                </div>
+
+                <!-- FAB Button -->
+                <div class="absolute bottom-24 right-6">
+                    <button class="fab-button w-14 h-14 rounded-full text-white flex items-center justify-center" onclick="window.location.href='/create-goal'">
+                        <i class="fas fa-plus text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Bottom Tab Bar -->
+                <div class="absolute bottom-0 left-0 right-0 bg-white h-20 flex items-center justify-around border-t border-gray-200">
+                    <div class="flex flex-col items-center space-y-1">
+                        <i class="fas fa-home text-blue-500 text-xl"></i>
+                        <span class="nunito text-xs font-medium text-blue-500">Home</span>
+                    </div>
+                    <div class="flex flex-col items-center space-y-1">
+                        <i class="fas fa-chart-bar text-gray-400 text-xl"></i>
+                        <span class="nunito text-xs text-gray-400">Stats</span>
+                    </div>
+                    <div class="flex flex-col items-center space-y-1">
+                        <i class="fas fa-bell text-gray-400 text-xl"></i>
+                        <span class="nunito text-xs text-gray-400">Alerts</span>
+                    </div>
+                    <div class="flex flex-col items-center space-y-1">
+                        <i class="fas fa-cog text-gray-400 text-xl"></i>
+                        <span class="nunito text-xs text-gray-400">Settings</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Category icons and colors
+        const categoryIcons = {
+            'Savings': { icon: 'fas fa-piggy-bank', color: 'blue', bgColor: 'bg-blue-50' },
+            'Debt': { icon: 'fas fa-credit-card', color: 'red', bgColor: 'bg-red-50' },
+            'Education': { icon: 'fas fa-graduation-cap', color: 'green', bgColor: 'bg-green-50' },
+            'Travel': { icon: 'fas fa-plane', color: 'yellow-600', bgColor: 'bg-yellow-50' },
+            'Home': { icon: 'fas fa-home', color: 'orange', bgColor: 'bg-orange-50' },
+            'Health': { icon: 'fas fa-heartbeat', color: 'pink', bgColor: 'bg-pink-50' },
+            'Retirement': { icon: 'fas fa-umbrella', color: 'indigo', bgColor: 'bg-indigo-50' },
+            'Investment': { icon: 'fas fa-chart-line', color: 'emerald', bgColor: 'bg-emerald-50' },
+            'Other': { icon: 'fas fa-ellipsis-h', color: 'purple', bgColor: 'bg-purple-50' }
+        };
+
+        // DOM elements
+        const activeGoalsCount = document.getElementById('activeGoalsCount');
+        const avgProgress = document.getElementById('avgProgress');
+        const goalsList = document.getElementById('goalsList');
+        const emptyState = document.getElementById('emptyState');
+        const loadingState = document.getElementById('loadingState');
+
+        // Format large numbers with abbreviations
+        function formatNumber(num) {
+            const absNum = Math.abs(num);
+            
+            if (absNum >= 1000000000) {
+                return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+            }
+            if (absNum >= 1000000) {
+                return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+            }
+            if (absNum >= 1000) {
+                return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+            }
+            return num.toLocaleString();
+        }
+
+        // Create goal card HTML
+        function createGoalCard(goal) {
+            const deadline = new Date(goal.deadline).toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric' 
+            });
+            
+            const catInfo = categoryIcons[goal.category] || categoryIcons['Savings'];
+            const progressPercent = goal.progressPercentage || 0;
+            const remaining = goal.remainingAmount || 0;
+            const isOverTarget = (goal.currentAmount || 0) > goal.targetAmount;
+            
+            return `
+                <div class="goal-card p-5 mb-4 cursor-pointer hover:shadow-lg transition-all" onclick="window.location.href='/goal/${goal._id}'">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <h3 class="spartan font-semibold text-gray-800 text-lg mb-1">${goal.title}</h3>
+                            <p class="nunito text-sm text-gray-500">${goal.category} Goal • ${deadline}</p>
+                        </div>
+                        <div class="w-10 h-10 ${catInfo.bgColor} rounded-full flex items-center justify-center">
+                            <i class="${catInfo.icon} text-${catInfo.color}-500"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="nunito text-gray-600">$${formatNumber(goal.currentAmount)} / $${formatNumber(goal.targetAmount)}</span>
+                            <span class="nunito font-semibold ${isOverTarget ? 'text-orange-600' : 'text-gray-800'}">${progressPercent}%${isOverTarget ? ' <span class="text-xs px-1 py-0.5 bg-orange-100 text-orange-600 font-medium rounded ml-1">Over</span>' : ''}</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="progress-bar h-2 rounded-full" style="width: ${progressPercent}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center">
+                        <span class="nunito text-xs text-gray-500">${isOverTarget ? 'Goal exceeded!' : `$${formatNumber(remaining)} remaining`}</span>
+                        <button class="quick-add-btn px-4 py-2 rounded-full text-sm font-medium nunito" onclick="event.stopPropagation(); window.location.href='/quick-contribution?goalId=${goal._id}'">
+                            <i class="fas fa-plus mr-1"></i>Quick Add
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load goals from API
+        async function loadGoals() {
+            try {
+                loadingState.style.display = 'block';
+                emptyState.style.display = 'none';
+                goalsList.innerHTML = '';
+
+                const [goalsResponse, statsResponse] = await Promise.all([
+                    fetch('/api/goals'),
+                    fetch('/api/goals/stats/summary')
+                ]);
+
+                const goals = await goalsResponse.json();
+                const stats = await statsResponse.json();
+
+                if (goalsResponse.ok) {
+                    loadingState.style.display = 'none';
+
+                    // Update stats
+                    activeGoalsCount.textContent = stats.activeGoals || 0;
+                    avgProgress.textContent = (stats.avgProgress || 0) + '%';
+
+                    if (goals.length === 0) {
+                        emptyState.style.display = 'block';
+                    } else {
+                        // Display goals
+                        goalsList.innerHTML = goals.map(createGoalCard).join('');
+                    }
+                } else {
+                    throw new Error('Failed to load goals');
+                }
+            } catch (error) {
+                loadingState.style.display = 'none';
+                console.error('Error loading goals:', error);
+                
+                // Show error state
+                goalsList.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-exclamation-triangle text-red-500 text-3xl"></i>
+                        </div>
+                        <h3 class="spartan text-xl font-semibold text-gray-800 mb-2">Error Loading Goals</h3>
+                        <p class="nunito text-gray-600 mb-6">Unable to load your goals. Please try again.</p>
+                        <button class="secondary-btn px-8 py-3 spartan font-semibold text-base" onclick="loadGoals()">
+                            <i class="fas fa-refresh mr-2"></i>Retry
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Clear localStorage on dashboard load (clean slate)
+        localStorage.removeItem('goalFormData');
+
+        // Initialize
+        loadGoals();
+
+        // Add some utility CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            .goal-card:hover {
+                transform: translateY(-2px);
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

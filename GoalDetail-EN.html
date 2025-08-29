@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goal Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Spartan:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        *::-webkit-scrollbar {
+            display: none;
+        }
+        .spartan { font-family: 'Spartan', sans-serif; }
+        .nunito { font-family: 'Nunito', sans-serif; }
+        .phone-mockup {
+            width: 375px;
+            height: 812px;
+            background: black;
+            border-radius: 40px;
+            padding: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #f6f6f6;
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .status-bar {
+            height: 44px;
+            background: transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #DCD4FD 0%, rgba(220, 212, 253, 0.3) 100%);
+        }
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        .progress-ring-circle {
+            stroke-dasharray: 251.2; /* 2 * π * 40 */
+            stroke-dashoffset: 100.48; /* 60% progress: 251.2 * (1 - 0.6) */
+            transition: stroke-dashoffset 0.5s ease-in-out;
+        }
+        .stats-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(71, 35, 219, 0.08);
+            border: 1px solid rgba(220, 212, 253, 0.3);
+        }
+        .contribution-item {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(71, 35, 219, 0.06);
+            border: 1px solid rgba(220, 212, 253, 0.2);
+        }
+        .primary-btn {
+            background: linear-gradient(135deg, #4723DB 0%, #FF4D59 100%);
+            color: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(71, 35, 219, 0.3);
+        }
+        .secondary-btn {
+            background: white;
+            color: #6B7280;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+        }
+        .source-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .source-salary {
+            background: #E0F2FE;
+            color: #0369A1;
+        }
+        .source-bonus {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+        .source-other {
+            background: #F3E8FF;
+            color: #7C3AED;
+        }
+        .rounded-20 {
+            border-radius: 20px;
+        }
+        .rounded-16 {
+            border-radius: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="flex justify-center items-center min-h-screen bg-gray-100">
+        <div class="phone-mockup">
+            <div class="screen">
+                <!-- Status Bar -->
+                <div class="status-bar flex-shrink-0">
+                    <span>9:41</span>
+                    <div class="flex space-x-1">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-full"></i>
+                    </div>
+                </div>
+
+                <!-- Scrollable Content -->
+                <div class="flex-1 overflow-y-auto min-h-0" style="padding-bottom: 80px;">
+                    <!-- Header -->
+                    <div class="gradient-bg px-6 py-6">
+                        <div class="flex items-center justify-between mb-8">
+                            <button class="w-10 h-10 bg-white bg-opacity-60 backdrop-blur-sm rounded-full flex items-center justify-center">
+                                <i class="fas fa-arrow-left text-gray-700"></i>
+                            </button>
+                            <h1 class="spartan font-semibold text-gray-800 text-lg">Goal Details</h1>
+                            <div class="relative">
+                                <button id="menuBtn" class="w-10 h-10 bg-white bg-opacity-60 backdrop-blur-sm rounded-full flex items-center justify-center">
+                                    <i class="fas fa-ellipsis-v text-gray-700"></i>
+                                </button>
+                                <!-- Dropdown Menu -->
+                                <div id="dropdownMenu" class="absolute right-0 top-12 bg-white rounded-16 shadow-lg border border-gray-200 min-w-40 z-50" style="display: none;">
+                                    <button id="deleteBtn" class="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 rounded-16 transition-colors spartan font-medium text-sm">
+                                        <i class="fas fa-trash mr-2"></i>Delete Goal
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Goal Info -->
+                        <div class="text-center mb-6">
+                            <div id="goalIcon" class="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 mx-auto shadow-md">
+                                <i class="fas fa-piggy-bank text-blue-500 text-2xl"></i>
+                            </div>
+                            <h2 id="goalTitle" class="spartan text-2xl font-bold text-gray-800 mb-2">Loading...</h2>
+                            <p id="goalDeadline" class="nunito text-sm text-gray-600">Loading...</p>
+                        </div>
+
+                        <!-- Progress Ring -->
+                        <div class="flex justify-center mb-6">
+                            <div class="relative">
+                                <svg class="progress-ring w-32 h-32" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="40" stroke="#e5e7eb" stroke-width="8" fill="none" />
+                                    <circle class="progress-ring-circle" cx="50" cy="50" r="40" 
+                                            stroke="url(#gradient)" stroke-width="8" fill="none" 
+                                            stroke-linecap="round" />
+                                    <defs>
+                                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" style="stop-color:#4723DB;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#DCD4FD;stop-opacity:1" />
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <div id="progressPercent" class="spartan text-2xl font-bold text-gray-800">0%</div>
+                                        <div class="nunito text-xs text-gray-600">Complete</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="px-6 py-4">
+                    <div class="grid grid-cols-3 gap-3 mb-6">
+                        <div class="stats-card p-4 text-center">
+                            <div id="currentAmount" class="nunito text-2xl font-bold text-gray-800 mb-1">$0</div>
+                            <div class="nunito text-xs text-gray-600">Current</div>
+                        </div>
+                        <div class="stats-card p-4 text-center">
+                            <div id="targetAmount" class="nunito text-2xl font-bold text-gray-800 mb-1">$0</div>
+                            <div class="nunito text-xs text-gray-600">Target</div>
+                        </div>
+                        <div class="stats-card p-4 text-center">
+                            <div id="remainingAmount" class="nunito text-2xl font-bold text-gray-800 mb-1">$0</div>
+                            <div class="nunito text-xs text-gray-600">Remaining</div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="flex space-x-3 mb-6">
+                        <button class="primary-btn flex-1 py-3 spartan font-semibold text-sm">
+                            <i class="fas fa-plus mr-2"></i>Add Contribution
+                        </button>
+                        <button class="secondary-btn px-6 py-3 spartan font-semibold text-sm">
+                            <i class="fas fa-robot mr-2"></i>Automate
+                        </button>
+                    </div>
+
+                    <!-- Recent Contributions -->
+                    <div class="mb-6">
+                        <h3 class="spartan font-semibold text-gray-800 text-lg mb-4">Recent Contributions</h3>
+                        
+                        <div id="contributionsList">
+                            <!-- Contributions will be loaded here -->
+                        </div>
+
+                        <div id="noContributions" class="text-center py-8" style="display: none;">
+                            <i class="fas fa-coins text-gray-400 text-2xl mb-3"></i>
+                            <p class="nunito text-gray-600">No contributions yet. Start by adding your first contribution!</p>
+                        </div>
+
+                        <!-- View All -->
+                        <button id="viewAllBtn" class="w-full text-center py-3 nunito text-sm text-blue-600 font-medium" style="display: none;">
+                            View all transaction history
+                        </button>
+                    </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Tab Bar -->
+                <div class="flex-shrink-0 bg-white h-20 flex items-center justify-around border-t border-gray-200">
+                    <div class="flex flex-col items-center space-y-1">
+                        <i class="fas fa-home text-blue-500 text-xl"></i>
+                        <span class="nunito text-xs font-medium text-blue-500">Home</span>
+                    </div>
+                    <div class="flex flex-col items-center space-y-1">
+                        <i class="fas fa-chart-bar text-gray-400 text-xl"></i>
+                        <span class="nunito text-xs text-gray-400">Stats</span>
+                    </div>
+                    <div class="flex flex-col items-center space-y-1">
+                        <i class="fas fa-bell text-gray-400 text-xl"></i>
+                        <span class="nunito text-xs text-gray-400">Alerts</span>
+                    </div>
+                    <div class="flex flex-col items-center space-y-1">
+                        <i class="fas fa-cog text-gray-400 text-xl"></i>
+                        <span class="nunito text-xs text-gray-400">Settings</span>
+                    </div>
+                </div>
+
+                <!-- Delete Confirmation Modal -->
+                <div id="deleteModal" class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50" style="display: none;">
+                    <div class="bg-white rounded-16 p-5 mx-4 w-full max-w-64 shadow-xl">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-exclamation-triangle text-red-500 text-lg"></i>
+                            </div>
+                            <h3 class="spartan text-lg font-bold text-gray-800 mb-2">Delete Goal</h3>
+                            <p class="nunito text-sm text-gray-600 mb-5 leading-relaxed">Are you sure you want to delete "<span id="deleteGoalTitle">this goal</span>"? This cannot be undone.</p>
+                            
+                            <div class="flex space-x-3">
+                                <button id="cancelDelete" class="flex-1 py-3 px-4 bg-gray-100 text-gray-700 rounded-16 nunito font-semibold text-sm hover:bg-gray-200 transition-colors">
+                                    Cancel
+                                </button>
+                                <button id="confirmDelete" class="flex-1 py-3 px-4 bg-red-500 text-white rounded-16 nunito font-semibold text-sm hover:bg-red-600 transition-colors">
+                                    <span id="deleteButtonText">Yes, Delete</span>
+                                    <i id="deleteSpinner" class="fas fa-spinner fa-spin ml-2" style="display: none;"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get goal ID from URL
+        const goalId = window.location.pathname.split('/').pop();
+        
+        // Category icons and colors
+        const categoryIcons = {
+            'Savings': { icon: 'fas fa-piggy-bank', color: 'blue', bgColor: 'bg-blue-50' },
+            'Debt': { icon: 'fas fa-credit-card', color: 'red', bgColor: 'bg-red-50' },
+            'Education': { icon: 'fas fa-graduation-cap', color: 'green', bgColor: 'bg-green-50' },
+            'Travel': { icon: 'fas fa-plane', color: 'yellow-600', bgColor: 'bg-yellow-50' },
+            'Home': { icon: 'fas fa-home', color: 'orange', bgColor: 'bg-orange-50' },
+            'Health': { icon: 'fas fa-heartbeat', color: 'pink', bgColor: 'bg-pink-50' },
+            'Retirement': { icon: 'fas fa-umbrella', color: 'indigo', bgColor: 'bg-indigo-50' },
+            'Investment': { icon: 'fas fa-chart-line', color: 'emerald', bgColor: 'bg-emerald-50' },
+            'Other': { icon: 'fas fa-ellipsis-h', color: 'purple', bgColor: 'bg-purple-50' }
+        };
+
+        // Source badge classes
+        const sourceBadgeClasses = {
+            'Salary': 'source-badge source-salary nunito',
+            'Bonus': 'source-badge source-bonus nunito',
+            'Other': 'source-badge source-other nunito'
+        };
+
+        // DOM elements
+        const goalTitle = document.getElementById('goalTitle');
+        const goalDeadline = document.getElementById('goalDeadline');
+        const goalIcon = document.getElementById('goalIcon');
+        const progressPercent = document.getElementById('progressPercent');
+        const currentAmount = document.getElementById('currentAmount');
+        const targetAmount = document.getElementById('targetAmount');
+        const remainingAmount = document.getElementById('remainingAmount');
+        const contributionsList = document.getElementById('contributionsList');
+        const noContributions = document.getElementById('noContributions');
+        const viewAllBtn = document.getElementById('viewAllBtn');
+        const progressRingCircle = document.querySelector('.progress-ring-circle');
+
+        // Create contribution item HTML
+        function createContributionItem(contribution) {
+            const date = new Date(contribution.date).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+            
+            const badgeClass = sourceBadgeClasses[contribution.source] || sourceBadgeClasses['Other'];
+            
+            return `
+                <div class="contribution-item p-4 mb-3">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <span class="nunito font-semibold text-gray-800">$${formatNumber(contribution.amount)}</span>
+                                <span class="${badgeClass}">${contribution.source}</span>
+                            </div>
+                            <p class="nunito text-sm text-gray-600 mb-1">${contribution.note || 'No note provided'}</p>
+                            <span class="nunito text-xs text-gray-500">${date}</span>
+                        </div>
+                        <div class="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center">
+                            <i class="fas fa-arrow-up text-green-500"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update progress ring
+        function updateProgressRing(percentage) {
+            const circumference = 2 * Math.PI * 40; // radius = 40
+            const offset = circumference - (percentage / 100) * circumference;
+            
+            if (progressRingCircle) {
+                progressRingCircle.style.strokeDasharray = circumference;
+                progressRingCircle.style.strokeDashoffset = offset;
+            }
+        }
+
+        // Load goal data
+        async function loadGoalData() {
+            try {
+                const response = await fetch(`/api/goals/${goalId}`);
+                
+                if (!response.ok) {
+                    throw new Error('Goal not found');
+                }
+                
+                const goal = await response.json();
+                
+                // Store current goal for delete functionality
+                currentGoal = goal;
+                
+                // Update basic info
+                goalTitle.textContent = goal.title;
+                goalDeadline.textContent = `Deadline: ${new Date(goal.deadline).toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                })}`;
+                
+                // Update icon
+                const catInfo = categoryIcons[goal.category] || categoryIcons['Savings'];
+                goalIcon.innerHTML = `<i class="${catInfo.icon} text-${catInfo.color}-500 text-2xl"></i>`;
+                
+                // Update amounts with abbreviated formatting
+                currentAmount.textContent = `$${formatNumber(goal.currentAmount || 0)}`;
+                targetAmount.textContent = `$${formatNumber(goal.targetAmount)}`;
+                remainingAmount.textContent = `$${formatNumber(goal.remainingAmount || 0)}`;
+                
+                // Update progress
+                const progressPct = goal.progressPercentage || 0;
+                const isOverTarget = (goal.currentAmount || 0) > goal.targetAmount;
+                
+                if (isOverTarget) {
+                    progressPercent.innerHTML = `${progressPct}% <span class="text-xs px-2 py-1 bg-orange-100 text-orange-600 font-medium rounded ml-1">Over Target</span>`;
+                } else {
+                    progressPercent.textContent = `${progressPct}%`;
+                }
+                
+                updateProgressRing(progressPct);
+                
+                // Update contributions
+                if (goal.contributions && goal.contributions.length > 0) {
+                    // Show latest 3 contributions
+                    const recentContributions = goal.contributions
+                        .sort((a, b) => new Date(b.date) - new Date(a.date))
+                        .slice(0, 3);
+                    
+                    contributionsList.innerHTML = recentContributions.map(createContributionItem).join('');
+                    
+                    if (goal.contributions.length > 3) {
+                        viewAllBtn.style.display = 'block';
+                    }
+                } else {
+                    noContributions.style.display = 'block';
+                }
+                
+            } catch (error) {
+                console.error('Error loading goal:', error);
+                
+                // Show error state
+                document.querySelector('.screen').innerHTML = `
+                    <div class="flex items-center justify-center h-full">
+                        <div class="text-center">
+                            <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-exclamation-triangle text-red-500 text-3xl"></i>
+                            </div>
+                            <h3 class="spartan text-xl font-semibold text-gray-800 mb-2">Goal Not Found</h3>
+                            <p class="nunito text-gray-600 mb-6">The requested goal could not be found.</p>
+                            <button class="primary-btn px-8 py-3 spartan font-semibold text-base" onclick="window.location.href='/'">
+                                <i class="fas fa-home mr-2"></i>Back to Dashboard
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Event listeners
+        document.querySelector('button .fa-arrow-left')?.parentElement.addEventListener('click', () => {
+            window.location.href = '/';
+        });
+
+        // Add Contribution button
+        document.querySelector('.primary-btn').addEventListener('click', () => {
+            window.location.href = `/quick-contribution?goalId=${goalId}`;
+        });
+
+        // Menu dropdown functionality
+        const menuBtn = document.getElementById('menuBtn');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const deleteModal = document.getElementById('deleteModal');
+        const cancelDelete = document.getElementById('cancelDelete');
+        const confirmDelete = document.getElementById('confirmDelete');
+        const deleteGoalTitle = document.getElementById('deleteGoalTitle');
+        const deleteButtonText = document.getElementById('deleteButtonText');
+        const deleteSpinner = document.getElementById('deleteSpinner');
+
+        let currentGoal = null;
+
+        // Format large numbers with abbreviations
+        function formatNumber(num) {
+            const absNum = Math.abs(num);
+            
+            if (absNum >= 1000000000) {
+                return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+            }
+            if (absNum >= 1000000) {
+                return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+            }
+            if (absNum >= 1000) {
+                return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+            }
+            return num.toLocaleString();
+        }
+
+        // Test formatting function with various ranges (for debugging)
+        console.log('Number formatting tests:');
+        console.log('500:', formatNumber(500)); // Should show: 500
+        console.log('1,000:', formatNumber(1000)); // Should show: 1K
+        console.log('1,500:', formatNumber(1500)); // Should show: 1.5K
+        console.log('10,000:', formatNumber(10000)); // Should show: 10K
+        console.log('100,000:', formatNumber(100000)); // Should show: 100K
+        console.log('1,000,000:', formatNumber(1000000)); // Should show: 1M
+        console.log('2,500,000:', formatNumber(2500000)); // Should show: 2.5M
+        console.log('1,000,000,000:', formatNumber(1000000000)); // Should show: 1B
+
+        // Toggle dropdown menu
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.style.display = dropdownMenu.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            dropdownMenu.style.display = 'none';
+        });
+
+        // Show delete confirmation modal
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.style.display = 'none';
+            if (currentGoal) {
+                deleteGoalTitle.textContent = currentGoal.title;
+                deleteModal.style.display = 'flex';
+            }
+        });
+
+        // Cancel delete
+        cancelDelete.addEventListener('click', () => {
+            deleteModal.style.display = 'none';
+        });
+
+        // Confirm delete
+        confirmDelete.addEventListener('click', async () => {
+            if (!currentGoal) return;
+
+            try {
+                // Show loading state
+                deleteButtonText.style.display = 'none';
+                deleteSpinner.style.display = 'inline';
+                confirmDelete.disabled = true;
+                cancelDelete.disabled = true;
+
+                const response = await fetch(`/api/goals/${goalId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    // Goal deleted successfully, redirect to dashboard
+                    window.location.href = '/';
+                } else {
+                    const error = await response.json();
+                    alert('Error deleting goal: ' + error.message);
+                    
+                    // Reset button state
+                    deleteButtonText.style.display = 'inline';
+                    deleteSpinner.style.display = 'none';
+                    confirmDelete.disabled = false;
+                    cancelDelete.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error deleting goal:', error);
+                alert('Failed to delete goal. Please try again.');
+                
+                // Reset button state
+                deleteButtonText.style.display = 'inline';
+                deleteSpinner.style.display = 'none';
+                confirmDelete.disabled = false;
+                cancelDelete.disabled = false;
+            }
+        });
+
+        // Close modal on background click
+        deleteModal.addEventListener('click', (e) => {
+            if (e.target === deleteModal) {
+                deleteModal.style.display = 'none';
+            }
+        });
+
+        // Initialize
+        loadGoalData();
+    </script>
+</body>
+</html>

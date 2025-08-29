@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Goal - Step 1</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Spartan:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        *::-webkit-scrollbar {
+            display: none;
+        }
+        .spartan { font-family: 'Spartan', sans-serif; }
+        .nunito { font-family: 'Nunito', sans-serif; }
+        .phone-mockup {
+            width: 375px;
+            height: 812px;
+            background: black;
+            border-radius: 40px;
+            padding: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #f6f6f6;
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .status-bar {
+            height: 44px;
+            background: transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #DCD4FD 0%, rgba(220, 212, 253, 0.3) 100%);
+        }
+        .input-field {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        .input-field:focus {
+            border-color: #4723DB;
+            box-shadow: 0 0 0 3px rgba(71, 35, 219, 0.1);
+        }
+        .select-field {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            appearance: none;
+        }
+        .progress-step {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4723DB;
+        }
+        .progress-step.inactive {
+            background: #e5e7eb;
+        }
+        .progress-line {
+            height: 2px;
+            background: #4723DB;
+            flex: 1;
+            margin: 0 8px;
+        }
+        .progress-line.inactive {
+            background: #e5e7eb;
+        }
+        .primary-btn {
+            background: linear-gradient(135deg, #4723DB 0%, #FF4D59 100%);
+            color: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(71, 35, 219, 0.3);
+        }
+        .secondary-btn {
+            background: white;
+            color: #6B7280;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+        }
+        .category-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        .category-card.selected {
+            border-color: #4723DB;
+            background: linear-gradient(135deg, rgba(71, 35, 219, 0.05) 0%, rgba(220, 212, 253, 0.1) 100%);
+        }
+        .rounded-16 {
+            border-radius: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="flex justify-center items-center min-h-screen bg-gray-100">
+        <div class="phone-mockup">
+            <div class="screen">
+                <!-- Status Bar -->
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <div class="flex space-x-1">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-full"></i>
+                    </div>
+                </div>
+
+                <!-- Header -->
+                <div class="gradient-bg px-6 py-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <button class="w-10 h-10 bg-white bg-opacity-60 backdrop-blur-sm rounded-full flex items-center justify-center">
+                            <i class="fas fa-arrow-left text-gray-700"></i>
+                        </button>
+                        <h1 class="spartan font-semibold text-gray-800 text-lg">Create Goal</h1>
+                        <button class="nunito text-sm text-gray-600">Cancel</button>
+                    </div>
+
+                    <!-- Progress Indicator -->
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="progress-step"></div>
+                        <div class="progress-line inactive"></div>
+                        <div class="progress-step inactive"></div>
+                        <div class="progress-line inactive"></div>
+                        <div class="progress-step inactive"></div>
+                    </div>
+                    
+                    <div class="text-center mb-6">
+                        <h2 class="spartan text-xl font-bold text-gray-800 mb-2">Basic Information</h2>
+                        <p class="nunito text-sm text-gray-600">Set up your goal's basic details</p>
+                    </div>
+                </div>
+
+                <!-- Form Content -->
+                <div class="px-6 py-6 flex-1 overflow-y-auto min-h-0" style="padding-bottom: 100px;">
+                    <form id="goalForm">
+                        <!-- Goal Title -->
+                        <div class="mb-6">
+                            <label class="nunito text-sm font-medium text-gray-700 mb-3 block">Goal Title *</label>
+                            <input type="text" 
+                                   id="goalTitle"
+                                   class="input-field w-full px-4 py-4 nunito text-base outline-none" 
+                                   placeholder="e.g., Buy a new car"
+                                   required>
+                            <div id="titleError" class="nunito text-xs text-red-500 mt-1 hidden">Title is required (1-60 characters)</div>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="mb-6">
+                            <label class="nunito text-sm font-medium text-gray-700 mb-3 block">Goal Category</label>
+                            <input type="hidden" id="goalCategory" value="Savings">
+                            <div class="grid grid-cols-3 gap-3">
+                                <div class="category-card selected p-3 text-center" data-category="Savings">
+                                    <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <i class="fas fa-piggy-bank text-blue-500 text-lg"></i>
+                                    </div>
+                                    <span class="nunito text-xs font-medium text-gray-800">Savings</span>
+                                </div>
+                                <div class="category-card p-3 text-center" data-category="Debt">
+                                    <div class="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <i class="fas fa-credit-card text-red-500 text-lg"></i>
+                                    </div>
+                                    <span class="nunito text-xs font-medium text-gray-800">Debt</span>
+                                </div>
+                                <div class="category-card p-3 text-center" data-category="Education">
+                                    <div class="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <i class="fas fa-graduation-cap text-green-500 text-lg"></i>
+                                    </div>
+                                    <span class="nunito text-xs font-medium text-gray-800">Education</span>
+                                </div>
+                                <div class="category-card p-3 text-center" data-category="Travel">
+                                    <div class="w-10 h-10 bg-yellow-50 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <i class="fas fa-plane text-yellow-600 text-lg"></i>
+                                    </div>
+                                    <span class="nunito text-xs font-medium text-gray-800">Travel</span>
+                                </div>
+                                <div class="category-card p-3 text-center" data-category="Home">
+                                    <div class="w-10 h-10 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <i class="fas fa-home text-orange-500 text-lg"></i>
+                                    </div>
+                                    <span class="nunito text-xs font-medium text-gray-800">Home</span>
+                                </div>
+                                <div class="category-card p-3 text-center" data-category="Health">
+                                    <div class="w-10 h-10 bg-pink-50 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <i class="fas fa-heartbeat text-pink-500 text-lg"></i>
+                                    </div>
+                                    <span class="nunito text-xs font-medium text-gray-800">Health</span>
+                                </div>
+                                <div class="category-card p-3 text-center" data-category="Retirement">
+                                    <div class="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <i class="fas fa-umbrella text-indigo-500 text-lg"></i>
+                                    </div>
+                                    <span class="nunito text-xs font-medium text-gray-800">Retirement</span>
+                                </div>
+                                <div class="category-card p-3 text-center" data-category="Investment">
+                                    <div class="w-10 h-10 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <i class="fas fa-chart-line text-emerald-500 text-lg"></i>
+                                    </div>
+                                    <span class="nunito text-xs font-medium text-gray-800">Investment</span>
+                                </div>
+                                <div class="category-card p-3 text-center" data-category="Other">
+                                    <div class="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <i class="fas fa-ellipsis-h text-purple-500 text-lg"></i>
+                                    </div>
+                                    <span class="nunito text-xs font-medium text-gray-800">Other</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Target Amount -->
+                        <div class="mb-6">
+                            <label class="nunito text-sm font-medium text-gray-700 mb-3 block">Target Amount *</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-base">$</span>
+                                <input type="number" 
+                                       id="targetAmount"
+                                       class="input-field w-full pl-8 pr-4 py-4 nunito text-base outline-none" 
+                                       placeholder="25,000"
+                                       step="0.01"
+                                       min="0"
+                                       required>
+                            </div>
+                            <div id="targetError" class="nunito text-xs text-red-500 mt-1 hidden">Target amount must be greater than 0</div>
+                        </div>
+
+                        <!-- Initial Amount -->
+                        <div class="mb-8">
+                            <label class="nunito text-sm font-medium text-gray-700 mb-3 block">Initial Amount</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-base">$</span>
+                                <input type="number" 
+                                       id="initialAmount"
+                                       class="input-field w-full pl-8 pr-4 py-4 nunito text-base outline-none" 
+                                       placeholder="0"
+                                       step="0.01"
+                                       min="0"
+                                       value="0">
+                            </div>
+                            <p class="nunito text-xs text-gray-500 mt-2">Amount already saved for this goal</p>
+                            <div id="initialError" class="nunito text-xs text-red-500 mt-1 hidden">Initial amount cannot exceed target amount</div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Bottom Actions -->
+                <div class="absolute bottom-6 left-6 right-6 space-y-3">
+                    <button id="nextBtn" class="primary-btn w-full py-4 spartan font-semibold text-base" disabled>
+                        Next Step
+                    </button>
+                    <div class="text-center">
+                        <span class="nunito text-xs text-gray-500">Step 1 of 3</span>
+                    </div>
+                </div>
+
+                <!-- Confirmation Modal -->
+                <div id="confirmationModal" class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50" style="display: none;">
+                    <div class="bg-white rounded-16 p-5 mx-4 w-full max-w-64 shadow-xl">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-exclamation-triangle text-orange-500 text-lg"></i>
+                            </div>
+                            <h3 class="spartan text-lg font-bold text-gray-800 mb-2">Leave Goal Creation?</h3>
+                            <p class="nunito text-sm text-gray-600 mb-5 leading-relaxed">Your progress will be lost. Are you sure?</p>
+                            
+                            <div class="flex space-x-3">
+                                <button id="cancelLeave" class="flex-1 py-3 px-4 bg-gray-100 text-gray-700 rounded-16 nunito font-semibold text-sm hover:bg-gray-200 transition-colors">
+                                    Stay Here
+                                </button>
+                                <button id="confirmLeave" class="flex-1 py-3 px-4 primary-btn nunito font-semibold text-sm">
+                                    Yes, Leave
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global goal data storage
+        let goalData = JSON.parse(localStorage.getItem('goalFormData')) || {
+            title: '',
+            category: 'Savings',
+            targetAmount: '',
+            initialAmount: 0
+        };
+
+        // DOM elements
+        const goalTitle = document.getElementById('goalTitle');
+        const goalCategory = document.getElementById('goalCategory');
+        const targetAmount = document.getElementById('targetAmount');
+        const initialAmount = document.getElementById('initialAmount');
+        const nextBtn = document.getElementById('nextBtn');
+        const categoryCards = document.querySelectorAll('.category-card');
+
+        // Load existing data
+        function loadFormData() {
+            if (goalData.title) goalTitle.value = goalData.title;
+            if (goalData.targetAmount) targetAmount.value = goalData.targetAmount;
+            if (goalData.initialAmount) initialAmount.value = goalData.initialAmount;
+            goalCategory.value = goalData.category;
+            
+            // Update category selection
+            categoryCards.forEach(card => {
+                card.classList.remove('selected');
+                if (card.dataset.category === goalData.category) {
+                    card.classList.add('selected');
+                }
+            });
+        }
+
+        // Validation functions
+        function validateTitle() {
+            const title = goalTitle.value.trim();
+            const titleError = document.getElementById('titleError');
+            
+            if (!title || title.length < 1 || title.length > 60) {
+                titleError.classList.remove('hidden');
+                return false;
+            }
+            titleError.classList.add('hidden');
+            return true;
+        }
+
+        function validateTargetAmount() {
+            const target = parseFloat(targetAmount.value);
+            const targetError = document.getElementById('targetError');
+            
+            if (!target || target <= 0) {
+                targetError.classList.remove('hidden');
+                return false;
+            }
+            targetError.classList.add('hidden');
+            return true;
+        }
+
+        function validateInitialAmount() {
+            const initial = parseFloat(initialAmount.value) || 0;
+            const target = parseFloat(targetAmount.value) || 0;
+            const initialError = document.getElementById('initialError');
+            
+            if (initial < 0 || (target > 0 && initial > target)) {
+                initialError.classList.remove('hidden');
+                return false;
+            }
+            initialError.classList.add('hidden');
+            return true;
+        }
+
+        function validateForm() {
+            const isTitleValid = validateTitle();
+            const isTargetValid = validateTargetAmount();
+            const isInitialValid = validateInitialAmount();
+            
+            const isValid = isTitleValid && isTargetValid && isInitialValid;
+            nextBtn.disabled = !isValid;
+            
+            if (isValid) {
+                nextBtn.classList.remove('opacity-50');
+            } else {
+                nextBtn.classList.add('opacity-50');
+            }
+            
+            return isValid;
+        }
+
+        // Save form data to localStorage
+        function saveFormData() {
+            goalData.title = goalTitle.value.trim();
+            goalData.category = goalCategory.value;
+            goalData.targetAmount = parseFloat(targetAmount.value) || '';
+            goalData.initialAmount = parseFloat(initialAmount.value) || 0;
+            localStorage.setItem('goalFormData', JSON.stringify(goalData));
+        }
+
+        // Event listeners
+        goalTitle.addEventListener('input', () => {
+            validateForm();
+            saveFormData();
+        });
+
+        targetAmount.addEventListener('input', () => {
+            validateForm();
+            saveFormData();
+        });
+
+        initialAmount.addEventListener('input', () => {
+            validateForm();
+            saveFormData();
+        });
+
+        // Category selection
+        categoryCards.forEach(card => {
+            card.addEventListener('click', () => {
+                categoryCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                goalCategory.value = card.dataset.category;
+                goalData.category = card.dataset.category;
+                saveFormData();
+            });
+        });
+
+        // Navigation
+        nextBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (validateForm()) {
+                saveFormData();
+                window.location.href = '/create-goal-step2';
+            }
+        });
+
+        // Modal elements
+        const confirmationModal = document.getElementById('confirmationModal');
+        const cancelLeave = document.getElementById('cancelLeave');
+        const confirmLeave = document.getElementById('confirmLeave');
+
+        // Function to show confirmation modal
+        function showConfirmationModal() {
+            confirmationModal.style.display = 'flex';
+        }
+
+        // Function to hide confirmation modal
+        function hideConfirmationModal() {
+            confirmationModal.style.display = 'none';
+        }
+
+        // Cancel button
+        const cancelButton = Array.from(document.querySelectorAll('button')).find(btn => btn.textContent.trim() === 'Cancel');
+        if (cancelButton) {
+            cancelButton.addEventListener('click', showConfirmationModal);
+        }
+
+        // Back button navigation
+        document.querySelector('button .fa-arrow-left')?.parentElement.addEventListener('click', showConfirmationModal);
+
+        // Modal event listeners
+        cancelLeave.addEventListener('click', hideConfirmationModal);
+        
+        confirmLeave.addEventListener('click', () => {
+            localStorage.removeItem('goalFormData');
+            window.location.href = '/';
+        });
+
+        // Close modal on background click
+        confirmationModal.addEventListener('click', (e) => {
+            if (e.target === confirmationModal) {
+                hideConfirmationModal();
+            }
+        });
+
+        // Initialize
+        loadFormData();
+        validateForm();
+
+        // Add disabled button styling
+        const style = document.createElement('style');
+        style.textContent = `
+            .primary-btn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

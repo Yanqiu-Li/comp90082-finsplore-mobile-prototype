@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Goal - Step 3</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Spartan:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        *::-webkit-scrollbar {
+            display: none;
+        }
+        .spartan { font-family: 'Spartan', sans-serif; }
+        .nunito { font-family: 'Nunito', sans-serif; }
+        .phone-mockup {
+            width: 375px;
+            height: 812px;
+            background: black;
+            border-radius: 40px;
+            padding: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #f6f6f6;
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .status-bar {
+            height: 44px;
+            background: transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #DCD4FD 0%, rgba(220, 212, 253, 0.3) 100%);
+        }
+        .progress-step {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4723DB;
+        }
+        .progress-line {
+            height: 2px;
+            background: #4723DB;
+            flex: 1;
+            margin: 0 8px;
+        }
+        .primary-btn {
+            background: linear-gradient(135deg, #4723DB 0%, #FF4D59 100%);
+            color: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(71, 35, 219, 0.3);
+        }
+        .secondary-btn {
+            background: white;
+            color: #6B7280;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+        }
+        .summary-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(71, 35, 219, 0.08);
+            border: 1px solid rgba(220, 212, 253, 0.3);
+        }
+        .feasible-badge {
+            background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .detail-item {
+            border-bottom: 1px solid #f3f4f6;
+            padding: 16px 0;
+        }
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        .progress-preview {
+            background: linear-gradient(90deg, #4723DB 0%, #DCD4FD 100%);
+            height: 8px;
+            border-radius: 4px;
+        }
+        .check-icon {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .rounded-20 {
+            border-radius: 20px;
+        }
+        .rounded-16 {
+            border-radius: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="flex justify-center items-center min-h-screen bg-gray-100">
+        <div class="phone-mockup">
+            <div class="screen">
+                <!-- Status Bar -->
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <div class="flex space-x-1">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-full"></i>
+                    </div>
+                </div>
+
+                <!-- Header -->
+                <div class="gradient-bg px-6 py-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <button class="w-10 h-10 bg-white bg-opacity-60 backdrop-blur-sm rounded-full flex items-center justify-center">
+                            <i class="fas fa-arrow-left text-gray-700"></i>
+                        </button>
+                        <h1 class="spartan font-semibold text-gray-800 text-lg">Create Goal</h1>
+                        <button class="nunito text-sm text-gray-600">Cancel</button>
+                    </div>
+
+                    <!-- Progress Indicator -->
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="progress-step"></div>
+                        <div class="progress-line"></div>
+                        <div class="progress-step"></div>
+                        <div class="progress-line"></div>
+                        <div class="progress-step"></div>
+                    </div>
+                    
+                    <div class="text-center mb-6">
+                        <h2 class="spartan text-xl font-bold text-gray-800 mb-2">Confirm Creation</h2>
+                        <p class="nunito text-sm text-gray-600">Review goal details and confirm creation</p>
+                    </div>
+                </div>
+
+                <!-- Summary Content -->
+                <div class="px-6 py-4 flex-1 overflow-y-auto min-h-0" style="padding-bottom: 100px;">
+                    <!-- Goal Summary Card -->
+                    <div class="summary-card p-6 mb-6">
+                        <!-- Header -->
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <h3 id="goalTitleDisplay" class="spartan text-xl font-bold text-gray-800 mb-2">-</h3>
+                                <div class="flex items-center space-x-2">
+                                    <span id="feasibilityDisplay" class="feasible-badge nunito">Feasible Goal</span>
+                                    <span id="categoryDisplay" class="nunito text-sm text-gray-500">-</span>
+                                </div>
+                            </div>
+                            <div id="categoryIcon" class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center">
+                                <i class="fas fa-piggy-bank text-blue-500 text-2xl"></i>
+                            </div>
+                        </div>
+
+                        <!-- Progress Preview -->
+                        <div class="mb-6">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span id="progressText" class="nunito text-gray-600">$0 / $0</span>
+                                <span id="progressPercent" class="nunito font-semibold text-gray-800">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div id="progressBar" class="progress-preview rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Details -->
+                        <div class="space-y-0">
+                            <div class="detail-item flex justify-between">
+                                <span class="nunito text-sm text-gray-600">Target Amount</span>
+                                <span id="targetAmountDisplay" class="nunito font-medium text-gray-800">-</span>
+                            </div>
+                            <div class="detail-item flex justify-between">
+                                <span class="nunito text-sm text-gray-600">Initial Amount</span>
+                                <span id="initialAmountDisplay" class="nunito font-medium text-gray-800">-</span>
+                            </div>
+                            <div class="detail-item flex justify-between">
+                                <span class="nunito text-sm text-gray-600">Amount Needed</span>
+                                <span id="amountNeededDisplay" class="nunito font-medium text-gray-800">-</span>
+                            </div>
+                            <div class="detail-item flex justify-between">
+                                <span class="nunito text-sm text-gray-600">Deadline</span>
+                                <span id="deadlineDisplay" class="nunito font-medium text-gray-800">-</span>
+                            </div>
+                            <div class="detail-item flex justify-between">
+                                <span class="nunito text-sm text-gray-600">Remaining Time</span>
+                                <span id="remainingTimeDisplay" class="nunito font-medium text-gray-800">-</span>
+                            </div>
+                            <div id="estimatedMonthlyRow" class="detail-item flex justify-between" style="display: none;">
+                                <span class="nunito text-sm text-gray-600">Estimated Monthly</span>
+                                <span id="estimatedMonthlyDisplay" class="nunito font-medium text-gray-800">-</span>
+                            </div>
+                            <div class="detail-item flex justify-between">
+                                <span class="nunito text-sm text-gray-600">Suggested Monthly</span>
+                                <span id="suggestedMonthlyDisplay" class="nunito font-medium text-blue-600">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Motivation Card -->
+                    <div id="motivationCard" class="summary-card p-6 mb-6" style="display: none;">
+                        <h4 class="spartan font-semibold text-gray-800 mb-3">Goal Motivation</h4>
+                        <p id="motivationDisplay" class="nunito text-sm text-gray-600 leading-relaxed">
+                            -
+                        </p>
+                    </div>
+
+                    <!-- Success Factors -->
+                    <div class="summary-card p-6 mb-6">
+                        <h4 class="spartan font-semibold text-gray-800 mb-4">Success Factor Analysis</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3">
+                                <div class="check-icon">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <span class="nunito text-sm text-gray-700">Clear and specific goal</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="check-icon">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <span class="nunito text-sm text-gray-700">Reasonable time frame</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="check-icon">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <span class="nunito text-sm text-gray-700">Achievable monthly contribution</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="check-icon">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <span class="nunito text-sm text-gray-700">Strong and clear motivation</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Actions -->
+                <div class="absolute bottom-6 left-6 right-6">
+                    <div class="flex space-x-3 mb-3">
+                        <button id="backBtn" class="secondary-btn flex-1 py-4 spartan font-semibold text-base">
+                            Back
+                        </button>
+                        <button id="createBtn" class="primary-btn flex-1 py-4 spartan font-semibold text-base">
+                            Create Goal
+                        </button>
+                    </div>
+                    <div class="text-center">
+                        <span class="nunito text-xs text-gray-500">Step 3 of 3</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
+        <div class="bg-white rounded-lg p-6 text-center">
+            <i class="fas fa-spinner fa-spin text-blue-500 text-2xl mb-3"></i>
+            <p class="nunito text-gray-700">Creating your goal...</p>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50" style="display: none;">
+        <div class="bg-white rounded-16 p-5 mx-4 w-full max-w-64 shadow-xl">
+            <div class="text-center">
+                <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-exclamation-triangle text-orange-500 text-lg"></i>
+                </div>
+                <h3 class="spartan text-lg font-bold text-gray-800 mb-2">Leave Goal Creation?</h3>
+                <p class="nunito text-sm text-gray-600 mb-5 leading-relaxed">Your progress will be lost. Are you sure?</p>
+                
+                <div class="flex space-x-3">
+                    <button id="cancelLeave" class="flex-1 py-3 px-4 bg-gray-100 text-gray-700 rounded-16 nunito font-semibold text-sm hover:bg-gray-200 transition-colors">
+                        Stay Here
+                    </button>
+                    <button id="confirmLeave" class="flex-1 py-3 px-4 primary-btn nunito font-semibold text-sm">
+                        Yes, Leave
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div id="successToast" class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50" style="display: none;">
+        <i class="fas fa-check-circle mr-2"></i>
+        Goal created successfully!
+    </div>
+
+    <script>
+        // Load goal data from localStorage
+        let goalData = JSON.parse(localStorage.getItem('goalFormData')) || {};
+
+        // DOM elements
+        const goalTitleDisplay = document.getElementById('goalTitleDisplay');
+        const categoryDisplay = document.getElementById('categoryDisplay');
+        const categoryIcon = document.getElementById('categoryIcon');
+        const feasibilityDisplay = document.getElementById('feasibilityDisplay');
+        const progressText = document.getElementById('progressText');
+        const progressPercent = document.getElementById('progressPercent');
+        const progressBar = document.getElementById('progressBar');
+        const targetAmountDisplay = document.getElementById('targetAmountDisplay');
+        const initialAmountDisplay = document.getElementById('initialAmountDisplay');
+        const amountNeededDisplay = document.getElementById('amountNeededDisplay');
+        const deadlineDisplay = document.getElementById('deadlineDisplay');
+        const remainingTimeDisplay = document.getElementById('remainingTimeDisplay');
+        const estimatedMonthlyRow = document.getElementById('estimatedMonthlyRow');
+        const estimatedMonthlyDisplay = document.getElementById('estimatedMonthlyDisplay');
+        const suggestedMonthlyDisplay = document.getElementById('suggestedMonthlyDisplay');
+        const motivationCard = document.getElementById('motivationCard');
+        const motivationDisplay = document.getElementById('motivationDisplay');
+        const createBtn = document.getElementById('createBtn');
+        const backBtn = document.getElementById('backBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const successToast = document.getElementById('successToast');
+
+        // Category icons and colors
+        const categoryIcons = {
+            'Savings': { icon: 'fas fa-piggy-bank', color: 'blue', bgColor: 'bg-blue-50' },
+            'Debt': { icon: 'fas fa-credit-card', color: 'red', bgColor: 'bg-red-50' },
+            'Education': { icon: 'fas fa-graduation-cap', color: 'green', bgColor: 'bg-green-50' },
+            'Other': { icon: 'fas fa-ellipsis-h', color: 'purple', bgColor: 'bg-purple-50' }
+        };
+
+        // Calculate feasibility and display data
+        function displayGoalData() {
+            // Check if we have all required data
+            if (!goalData.title || !goalData.targetAmount || !goalData.deadline) {
+                alert('Missing goal information. Please go back and complete all steps.');
+                window.location.href = '/create-goal';
+                return;
+            }
+
+            // Basic information
+            goalTitleDisplay.textContent = goalData.title;
+            categoryDisplay.textContent = goalData.category || 'Savings';
+            
+            // Update category icon
+            const catInfo = categoryIcons[goalData.category] || categoryIcons['Savings'];
+            categoryIcon.className = `w-16 h-16 ${catInfo.bgColor} rounded-full flex items-center justify-center`;
+            categoryIcon.innerHTML = `<i class="${catInfo.icon} text-${catInfo.color}-500 text-2xl"></i>`;
+
+            // Amounts
+            const targetAmount = goalData.targetAmount;
+            const initialAmount = goalData.initialAmount || 0;
+            const amountNeeded = targetAmount - initialAmount;
+            
+            targetAmountDisplay.textContent = `$${targetAmount.toLocaleString()}`;
+            initialAmountDisplay.textContent = `$${initialAmount.toLocaleString()}`;
+            amountNeededDisplay.textContent = `$${amountNeeded.toLocaleString()}`;
+
+            // Progress
+            const progressPct = initialAmount > 0 ? Math.round((initialAmount / targetAmount) * 100) : 0;
+            progressText.textContent = `$${initialAmount.toLocaleString()} / $${targetAmount.toLocaleString()}`;
+            progressPercent.textContent = `${progressPct}%`;
+            progressBar.style.width = `${progressPct}%`;
+
+            // Deadline and timing
+            const deadlineDate = new Date(goalData.deadline);
+            const now = new Date();
+            const msPerMonth = 1000 * 60 * 60 * 24 * 30.44;
+            const monthsRemaining = Math.max(1, Math.ceil((deadlineDate - now) / msPerMonth));
+            const suggestedAmount = Math.ceil(amountNeeded / monthsRemaining);
+
+            deadlineDisplay.textContent = deadlineDate.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            remainingTimeDisplay.textContent = monthsRemaining + (monthsRemaining === 1 ? ' month' : ' months');
+            suggestedMonthlyDisplay.textContent = `$${suggestedAmount.toLocaleString()}`;
+
+            // Estimated monthly contribution
+            if (goalData.estimatedMonthlyContribution) {
+                estimatedMonthlyRow.style.display = 'flex';
+                estimatedMonthlyDisplay.textContent = `$${goalData.estimatedMonthlyContribution.toLocaleString()}`;
+
+                // Feasibility analysis
+                const isFeasible = goalData.estimatedMonthlyContribution >= suggestedAmount;
+                if (isFeasible) {
+                    feasibilityDisplay.textContent = 'Feasible Goal';
+                    feasibilityDisplay.className = 'feasible-badge nunito';
+                } else {
+                    feasibilityDisplay.textContent = 'At Risk';
+                    feasibilityDisplay.className = 'at-risk-badge nunito';
+                }
+            } else {
+                estimatedMonthlyRow.style.display = 'none';
+                feasibilityDisplay.textContent = 'Goal Set';
+                feasibilityDisplay.className = 'feasible-badge nunito';
+            }
+
+            // Motivation
+            if (goalData.motivation && goalData.motivation.trim()) {
+                motivationCard.style.display = 'block';
+                motivationDisplay.textContent = goalData.motivation;
+            }
+        }
+
+        // Create goal via API
+        async function createGoal() {
+            loadingOverlay.style.display = 'flex';
+            
+            try {
+                const response = await fetch('/api/goals', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title: goalData.title,
+                        category: goalData.category || 'Savings',
+                        targetAmount: goalData.targetAmount,
+                        initialAmount: goalData.initialAmount || 0,
+                        deadline: goalData.deadline,
+                        motivation: goalData.motivation || '',
+                        estimatedMonthlyContribution: goalData.estimatedMonthlyContribution
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Success
+                    localStorage.removeItem('goalFormData');
+                    loadingOverlay.style.display = 'none';
+                    
+                    // Show success toast
+                    successToast.style.display = 'block';
+                    setTimeout(() => {
+                        successToast.style.display = 'none';
+                        window.location.href = `/goal/${result._id}`;
+                    }, 2000);
+                } else {
+                    throw new Error(result.message || 'Failed to create goal');
+                }
+            } catch (error) {
+                loadingOverlay.style.display = 'none';
+                alert('Error creating goal: ' + error.message);
+                console.error('Error creating goal:', error);
+            }
+        }
+
+        // Event listeners
+        createBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            createGoal();
+        });
+
+        backBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = '/create-goal-step2';
+        });
+
+        // Cancel button
+        document.querySelectorAll('button').forEach(btn => {
+            if (btn.textContent.includes('Cancel')) {
+                btn.addEventListener('click', () => {
+                    if (confirm('Are you sure you want to cancel? Your progress will be lost.')) {
+                        localStorage.removeItem('goalFormData');
+                        window.location.href = '/';
+                    }
+                });
+            }
+        });
+
+        // Modal elements
+        const confirmationModal = document.getElementById('confirmationModal');
+        const cancelLeave = document.getElementById('cancelLeave');
+        const confirmLeave = document.getElementById('confirmLeave');
+
+        // Function to show confirmation modal
+        function showConfirmationModal() {
+            confirmationModal.style.display = 'flex';
+        }
+
+        // Function to hide confirmation modal
+        function hideConfirmationModal() {
+            confirmationModal.style.display = 'none';
+        }
+
+        // Back arrow navigation
+        document.querySelector('button .fa-arrow-left')?.parentElement.addEventListener('click', showConfirmationModal);
+
+        // Modal event listeners
+        cancelLeave.addEventListener('click', hideConfirmationModal);
+        
+        confirmLeave.addEventListener('click', () => {
+            localStorage.removeItem('goalFormData');
+            window.location.href = '/';
+        });
+
+        // Close modal on background click
+        confirmationModal.addEventListener('click', (e) => {
+            if (e.target === confirmationModal) {
+                hideConfirmationModal();
+            }
+        });
+
+        // Initialize
+        displayGoalData();
+    </script>
+</body>
+</html>
